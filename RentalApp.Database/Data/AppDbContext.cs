@@ -1,79 +1,85 @@
-﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using RentalApp.Database.Models;
 
 namespace RentalApp.Database.Data;
 
 public class AppDbContext : DbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public AppDbContext()
-    { }
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    { }
+    // Existing StarterApp tables - DO NOT REMOVE
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (optionsBuilder.IsConfigured) return;
-
-        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            var a = Assembly.GetExecutingAssembly();
-            using var stream = a.GetManifestResourceStream("RentalApp.Database.appsettings.json");
-
-            var config = new ConfigurationBuilder()
-                .AddJsonStream(stream)
-                .Build();
-
-            connectionString = config.GetConnectionString("DevelopmentConnection");
-        }
-
-        optionsBuilder.UseNpgsql(connectionString);
-    }
-
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
+    // New RentalApp tables
+    public DbSet<Item> Items => Set<Item>();
+    public DbSet<Rental> Rentals => Set<Rental>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Category> Categories => Set<Category>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure User entity
-        modelBuilder.Entity<User>(entity =>
+        // Item configuration
+        modelBuilder.Entity<Item>(entity =>
         {
-            entity.HasIndex(e => e.Email).IsUnique();
-            entity.Property(e => e.Email).HasMaxLength(255);
-            entity.Property(e => e.FirstName).HasMaxLength(100);
-            entity.Property(e => e.LastName).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.PasswordSalt).HasMaxLength(255);
+            entity.HasOne(i => i.Owner)
+                  .WithMany()
+                  .HasForeignKey(i => i.OwnerId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(i => i.Category)
+                  .WithMany(c => c.Items)
+                  .HasForeignKey(i => i.CategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // Configure Role entity
-        modelBuilder.Entity<Role>(entity =>
+        // Rental configuration
+        modelBuilder.Entity<Rental>(entity =>
         {
-            entity.HasIndex(e => e.Name).IsUnique();
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasOne(r => r.Item)
+                  .WithMany(i => i.Rentals)
+                  .HasForeignKey(r => r.ItemId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Borrower)
+                  .WithMany()
+                  .HasForeignKey(r => r.BorrowerId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Property(r => r.Status)
+                  .HasConversion<string>();
         });
 
-        // Configure UserRole entity
-        modelBuilder.Entity<UserRole>(entity =>
+        // Review configuration
+        modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasIndex(e => new { e.UserId, e.RoleId }).IsUnique();
+            entity.HasOne(r => r.Item)
+                  .WithMany(i => i.Reviews)
+                  .HasForeignKey(r => r.ItemId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(ur => ur.User)
-                  .WithMany(u => u.UserRoles)
-                  .HasForeignKey(ur => ur.UserId);
+            entity.HasOne(r => r.Reviewer)
+                  .WithMany()
+                  .HasForeignKey(r => r.ReviewerId)
+                  .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(ur => ur.Role)
-                  .WithMany(r => r.UserRoles)
-                  .HasForeignKey(ur => ur.RoleId);
+            entity.HasOne(r => r.Rental)
+                  .WithOne(rental => rental.Review)
+                  .HasForeignKey<Review>(r => r.RentalId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
+
+        // Seed categories
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "Tools", Description = "Power and hand tools" },
+            new Category { Id = 2, Name = "Camping Gear", Description = "Outdoor and camping equipment" },
+            new Category { Id = 3, Name = "Board Games", Description = "Board games and puzzles" },
+            new Category { Id = 4, Name = "Sports", Description = "Sports and fitness equipment" },
+            new Category { Id = 5, Name = "Electronics", Description = "Electronic devices and gadgets" },
+            new Category { Id = 6, Name = "Garden", Description = "Gardening tools and equipment" }
+        );
     }
-
 }
