@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="RentalApp.Views.ItemsListPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="+" Command="{Binding NavigateToCreateItemCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="10">
+
+        <!-- Search Bar -->
+        <SearchBar Grid.Row="0"
+                   Text="{Binding SearchText}"
+                   Placeholder="Search items..."
+                   SearchCommand="{Binding SearchCommand}"
+                   Margin="0,5" />
+
+        <!-- Error -->
+        <Border Grid.Row="1"
+                BackgroundColor="#FFEBEE" Padding="10"
+                IsVisible="{Binding HasError}" Margin="0,5">
+            <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+            <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" />
+        </Border>
+
+        <!-- Items List -->
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding LoadItemsCommand}">
+            <CollectionView ItemsSource="{Binding Items}"
+                            EmptyView="No items found. Be the first to list something!">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,5" Padding="15"
+                                BackgroundColor="White" StrokeThickness="1">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10"/></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavigateToItemDetailCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       FontSize="16" FontAttributes="Bold" />
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding DailyRate, StringFormat='£{0:F2}/day'}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="#2196F3" />
+                                <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                       Text="{Binding Description}"
+                                       FontSize="13" TextColor="Gray"
+                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                <Label Grid.Row="2" Grid.Column="0"
+                                       Text="{Binding Category.Name}"
+                                       FontSize="12" TextColor="#4CAF50" />
+                                <Label Grid.Row="2" Grid.Column="1"
+                                       Text="{Binding LocationName}"
+                                       FontSize="12" TextColor="Gray" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

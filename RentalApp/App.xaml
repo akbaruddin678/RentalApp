@@ -1,5 +1,6 @@
 ﻿<?xml version = "1.0" encoding = "UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:converters="clr-namespace:RentalApp.Converters"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:RentalApp.Converters"
              xmlns:local="clr-namespace:RentalApp"
@@ -12,6 +13,8 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ResourceDictionary>
     </Application.Resources>
 </Application>

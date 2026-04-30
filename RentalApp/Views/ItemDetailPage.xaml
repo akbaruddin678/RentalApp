@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="RentalApp.Views.ItemDetailPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit" Command="{Binding EditItemCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <StackLayout Padding="15" Spacing="15">
+
+            <Border BackgroundColor="#FFEBEE" Padding="10" IsVisible="{Binding HasError}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" />
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               Color="#2196F3" />
+
+            <Border Padding="20" BackgroundColor="White" StrokeThickness="1">
+                <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                <StackLayout Spacing="10">
+                    <Label Text="{Binding Item.Title}" FontSize="22" FontAttributes="Bold" />
+                    <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}"
+                           FontSize="18" TextColor="#2196F3" FontAttributes="Bold" />
+                    <Label Text="{Binding Item.Description}" FontSize="14" TextColor="Gray" />
+                    <Label Text="{Binding Item.Category.Name, StringFormat='Category: {0}'}"
+                           FontSize="13" TextColor="#4CAF50" />
+                    <Label Text="{Binding Item.LocationName, StringFormat='📍 {0}'}"
+                           FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Item.Owner.Email, StringFormat='Owner: {0}'}"
+                           FontSize="13" TextColor="Gray" />
+                </StackLayout>
+            </Border>
+
+            <Border Padding="20" BackgroundColor="White" StrokeThickness="1">
+                <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                <StackLayout Spacing="12">
+                    <Label Text="Request Rental" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="Start Date" FontSize="14" TextColor="Gray" />
+                    <DatePicker Date="{Binding StartDate}" />
+                    <Label Text="End Date" FontSize="14" TextColor="Gray" />
+                    <DatePicker Date="{Binding EndDate}" />
+                    <Label Text="{Binding EstimatedPrice, StringFormat='Estimated Total: £{0:F2}'}"
+                           FontSize="16" FontAttributes="Bold" TextColor="#2196F3" />
+                    <Editor Text="{Binding RentalNotes}"
+                            Placeholder="Notes for the owner (optional)"
+                            HeightRequest="80" />
+                    <Button Text="Request Rental"
+                            Command="{Binding RequestRentalCommand}"
+                            BackgroundColor="#2196F3" TextColor="White"
+                            CornerRadius="8" HeightRequest="50" />
+                </StackLayout>
+            </Border>
+
+            <Button Text="View Reviews"
+                    BackgroundColor="Transparent" TextColor="#2196F3"
+                    BorderColor="#2196F3" BorderWidth="1"
+                    CornerRadius="8" HeightRequest="45"
+                    Clicked="OnViewReviewsClicked" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

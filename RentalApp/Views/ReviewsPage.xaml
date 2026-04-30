@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="RentalApp.Views.ReviewsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <StackLayout Padding="15" Spacing="15">
+
+            <!-- Average Rating -->
+            <Border Padding="20" BackgroundColor="#E3F2FD" StrokeThickness="0">
+                <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                <StackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="Average Rating" FontSize="14" TextColor="Gray"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding AverageRating, StringFormat='⭐ {0:F1} / 5.0'}"
+                           FontSize="28" FontAttributes="Bold" TextColor="#FF9800"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding Reviews.Count, StringFormat='{0} review(s)'}"
+                           FontSize="13" TextColor="Gray" HorizontalOptions="Center" />
+                </StackLayout>
+            </Border>
+
+            <!-- Submit Review (if eligible) -->
+            <Border Padding="20" BackgroundColor="White" StrokeThickness="1"
+                    IsVisible="{Binding CanReview}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                <StackLayout Spacing="12">
+                    <Label Text="Leave a Review" FontSize="18" FontAttributes="Bold" />
+
+                    <Label Text="{Binding NewRating, StringFormat='Rating: {0} ⭐'}"
+                           FontSize="14" />
+                    <Slider Value="{Binding NewRating}" Minimum="1" Maximum="5"
+                            ThumbColor="#FF9800" MinimumTrackColor="#FF9800" />
+
+                    <Editor Text="{Binding NewComment}"
+                            Placeholder="Share your experience..."
+                            HeightRequest="100" />
+
+                    <Button Text="Submit Review"
+                            Command="{Binding SubmitReviewCommand}"
+                            BackgroundColor="#FF9800" TextColor="White"
+                            CornerRadius="8" HeightRequest="45" />
+                </StackLayout>
+            </Border>
+
+            <!-- Success Message -->
+            <Border Padding="10" BackgroundColor="#E8F5E9"
+                    IsVisible="{Binding HasSuccess}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                <Label Text="{Binding SuccessMessage}" TextColor="#388E3C" />
+            </Border>
+
+            <!-- Error -->
+            <Border Padding="10" BackgroundColor="#FFEBEE"
+                    IsVisible="{Binding HasError}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" />
+            </Border>
+
+            <Label Text="All Reviews" FontSize="18" FontAttributes="Bold" />
+
+            <!-- Reviews List -->
+            <CollectionView ItemsSource="{Binding Reviews}"
+                            HeightRequest="400">
+                <CollectionView.EmptyView>
+                    <Label Text="No reviews yet. Be the first!" TextColor="Gray"
+                           HorizontalOptions="Center" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,5" Padding="15" BackgroundColor="White" StrokeThickness="1">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10"/></Border.StrokeShape>
+                            <StackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Reviewer.Email}"
+                                           FontSize="14" FontAttributes="Bold" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Rating, StringFormat='{0} ⭐'}"
+                                           FontSize="14" TextColor="#FF9800" />
+                                </Grid>
+                                <Label Text="{Binding Comment}" FontSize="13" TextColor="Gray" />
+                                <Label Text="{Binding CreatedAt, StringFormat='{0:dd/MM/yyyy}'}"
+                                       FontSize="11" TextColor="LightGray" />
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
