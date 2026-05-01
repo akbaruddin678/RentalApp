@@ -1,0 +1,24 @@
+namespace RentalApp.Services;
+public class LocationService : ILocationService
+{
+    public async Task<(double Latitude, double Longitude)?> GetCurrentLocationAsync()
+    {
+        try
+        {
+            var loc = await Geolocation.Default.GetLastKnownLocationAsync();
+            if (loc is not null) return (loc.Latitude, loc.Longitude);
+            var req = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+            loc = await Geolocation.Default.GetLocationAsync(req);
+            return loc is not null ? (loc.Latitude, loc.Longitude) : null;
+        }
+        catch { return null; }
+    }
+    public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+    {
+        const double R = 6371;
+        var dLat = ToRad(lat2-lat1); var dLon = ToRad(lon2-lon1);
+        var a = Math.Sin(dLat/2)*Math.Sin(dLat/2)+Math.Cos(ToRad(lat1))*Math.Cos(ToRad(lat2))*Math.Sin(dLon/2)*Math.Sin(dLon/2);
+        return R*2*Math.Atan2(Math.Sqrt(a),Math.Sqrt(1-a));
+    }
+    private static double ToRad(double d) => d*Math.PI/180.0;
+}

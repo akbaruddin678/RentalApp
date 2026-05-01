@@ -12,41 +12,29 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
-        builder
-            .UseMauiApp<App>()
-            .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            });
-
-        // Database
+        builder.UseMauiApp<App>().ConfigureFonts(fonts => {
+            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+            fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+        });
         builder.Services.AddDbContext<AppDbContext>();
-
-        // ── Existing StarterApp Services ──
+        // StarterApp services - KEEP
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
-
-        // ── Repositories ──
+        // Repositories
         builder.Services.AddScoped<IItemRepository, ItemRepository>();
         builder.Services.AddScoped<IRentalRepository, RentalRepository>();
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-        // ── New Services ──
+        // Services
         builder.Services.AddScoped<IRentalService, RentalService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<ILocationService, LocationService>();
-        builder.Services.AddHttpClient();
-        builder.Services.AddSingleton<IApiService, ApiService>(sp =>
-            new ApiService(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
-
-        // ── Existing Shell & App ──
+        builder.Services.AddSingleton<IApiService, ApiService>();
+        // Shell - KEEP
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<App>();
-
-        // ── Existing Pages & ViewModels ──
+        // Existing pages - KEEP
         builder.Services.AddTransient<MainViewModel>();
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddSingleton<LoginViewModel>();
@@ -59,8 +47,7 @@ public static class MauiProgram
         builder.Services.AddTransient<UserDetailViewModel>();
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
-
-        // ── New RentalApp Pages & ViewModels ──
+        // New pages
         builder.Services.AddTransient<ItemsListViewModel>();
         builder.Services.AddTransient<ItemsListPage>();
         builder.Services.AddTransient<ItemDetailViewModel>();
@@ -73,11 +60,9 @@ public static class MauiProgram
         builder.Services.AddTransient<RentalsPage>();
         builder.Services.AddTransient<ReviewsViewModel>();
         builder.Services.AddTransient<ReviewsPage>();
-
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-
         return builder.Build();
     }
 }

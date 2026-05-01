@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using RentalApp.Database.Data;
-
-Console.WriteLine("Running migrations...");
-using var context = new AppDbContext();
-context.Database.Migrate();
-Console.WriteLine("Migrations complete.");
+// Migrations project - used by EF Core tooling only.
+// Run: dotnet ef migrations add <Name> --project RentalApp.Migrations --startup-project RentalApp.Database
+Console.WriteLine("Migrations project ready.");

@@ -1,7 +1,5 @@
 using RentalApp.ViewModels;
-
 namespace RentalApp.Views;
-
 public partial class ItemsListPage : ContentPage
 {
     public ItemsListPage(ItemsListViewModel viewModel)
@@ -9,11 +7,9 @@ public partial class ItemsListPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
-
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is ItemsListViewModel vm)
-            vm.LoadItemsCommand.Execute(null);
+        ((ItemsListViewModel)BindingContext).LoadItemsCommand.Execute(null);
     }
 }

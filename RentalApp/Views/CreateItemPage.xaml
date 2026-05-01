@@ -1,65 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="RentalApp.Views.CreateItemPage"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RentalApp.Views.CreateItemPage"
              Title="{Binding Title}">
-
-    <ScrollView>
-        <StackLayout Padding="20" Spacing="15">
-
-            <!-- Error -->
-            <Border BackgroundColor="#FFEBEE" Padding="10"
-                    IsVisible="{Binding HasError}">
-                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-                <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" />
-            </Border>
-
-            <Label Text="Item Title" FontSize="14" FontAttributes="Bold" />
-            <Border StrokeThickness="1">
-                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-                <Entry Text="{Binding ItemTitle}" Placeholder="e.g. Power Drill" Margin="10,5" />
-            </Border>
-
-            <Label Text="Description" FontSize="14" FontAttributes="Bold" />
-            <Border StrokeThickness="1">
-                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-                <Editor Text="{Binding Description}"
-                        Placeholder="Describe your item..."
-                        HeightRequest="100" Margin="10,5" />
-            </Border>
-
-            <Label Text="Daily Rate (£)" FontSize="14" FontAttributes="Bold" />
-            <Border StrokeThickness="1">
-                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-                <Entry Text="{Binding DailyRateText}" Placeholder="e.g. 5.00"
-                       Keyboard="Numeric" Margin="10,5" />
-            </Border>
-
-            <Label Text="Category" FontSize="14" FontAttributes="Bold" />
-            <Picker ItemsSource="{Binding Categories}"
-                    SelectedIndex="{Binding SelectedCategoryIndex}" />
-
-            <Label Text="Location" FontSize="14" FontAttributes="Bold" />
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <Border StrokeThickness="1">
-                    <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-                    <Entry Text="{Binding LocationName}" Placeholder="Location name" Margin="10,5" />
-                </Border>
-                <Button Grid.Column="1" Text="📍 GPS"
-                        Command="{Binding GetLocationCommand}"
-                        BackgroundColor="#4CAF50" TextColor="White"
-                        CornerRadius="8" />
-            </Grid>
-
-            <!-- Loading -->
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-                               Color="#2196F3" />
-
-            <Button Text="{Binding Title}"
-                    Command="{Binding SaveItemCommand}"
-                    BackgroundColor="#2196F3" TextColor="White"
-                    CornerRadius="8" HeightRequest="50"
-                    FontSize="16" FontAttributes="Bold" />
-        </StackLayout>
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+            <Entry Text="{Binding ItemTitle}" Placeholder="Item Title" />
+            <Editor Text="{Binding Description}" Placeholder="Description" HeightRequest="100" />
+            <Entry Text="{Binding DailyRateText}" Placeholder="Daily Rate ($)" Keyboard="Numeric" />
+            <Picker ItemsSource="{Binding Categories}" SelectedIndex="{Binding SelectedCategoryIndex}" Title="Select Category" />
+            
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Get GPS Location" Command="{Binding GetLocationCommand}" />
+                <Label Text="{Binding Location}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            
+            <Button Text="Save Listing" Command="{Binding SaveItemCommand}" Margin="0,20,0,0" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

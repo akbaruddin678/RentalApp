@@ -1,103 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="RentalApp.Views.RentalsPage"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:RentalApp.Database.Models;assembly=RentalApp.Database"
+             x:Class="RentalApp.Views.RentalsPage"
              Title="{Binding Title}">
-
-    <Grid RowDefinitions="Auto,Auto,*" Padding="10">
-
-        <!-- Error -->
-        <Border Grid.Row="0" BackgroundColor="#FFEBEE" Padding="10"
-                IsVisible="{Binding HasError}" Margin="0,5">
-            <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
-            <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" />
-        </Border>
-
-        <!-- Tabs -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="0,10">
-            <Button Grid.Column="0" Text="Incoming"
-                    Clicked="OnIncomingTabClicked"
-                    BackgroundColor="#2196F3" TextColor="White"
-                    CornerRadius="0" />
-            <Button Grid.Column="1" Text="Outgoing"
-                    Clicked="OnOutgoingTabClicked"
-                    BackgroundColor="#90CAF9" TextColor="White"
-                    CornerRadius="0" />
-        </Grid>
-
-        <!-- Incoming Rentals -->
-        <RefreshView Grid.Row="2"
-                     IsRefreshing="{Binding IsBusy}"
-                     Command="{Binding LoadRentalsCommand}"
-                     x:Name="IncomingView">
-            <CollectionView ItemsSource="{Binding IncomingRentals}"
-                            EmptyView="No incoming rental requests.">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0,5" Padding="15" BackgroundColor="White" StrokeThickness="1">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="10"/></Border.StrokeShape>
-                            <StackLayout Spacing="8">
-                                <Label Text="{Binding Item.Title}" FontSize="16" FontAttributes="Bold" />
-                                <Label Text="{Binding Borrower.Email, StringFormat='From: {0}'}"
-                                       FontSize="13" TextColor="Gray" />
-                                <Label Text="{Binding Status, StringFormat='Status: {0}'}"
-                                       FontSize="13" TextColor="#FF9800" />
-                                <Label Text="{Binding TotalPrice, StringFormat='Total: £{0:F2}'}"
-                                       FontSize="14" TextColor="#2196F3" FontAttributes="Bold" />
-                                <Label Text="{Binding StartDate, StringFormat='Start: {0:dd/MM/yyyy}'}"
-                                       FontSize="12" TextColor="Gray" />
-                                <Label Text="{Binding EndDate, StringFormat='End: {0:dd/MM/yyyy}'}"
-                                       FontSize="12" TextColor="Gray" />
-                                <!-- Action Buttons -->
-                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="5">
-                                    <Button Grid.Column="0" Text="Approve"
-                                            BackgroundColor="#4CAF50" TextColor="White" CornerRadius="6"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ApproveRentalCommand}"
-                                            CommandParameter="{Binding .}" />
-                                    <Button Grid.Column="1" Text="Reject"
-                                            BackgroundColor="#F44336" TextColor="White" CornerRadius="6"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RejectRentalCommand}"
-                                            CommandParameter="{Binding .}" />
-                                    <Button Grid.Column="2" Text="Start"
-                                            BackgroundColor="#FF9800" TextColor="White" CornerRadius="6"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.StartRentalCommand}"
-                                            CommandParameter="{Binding .}" />
-                                </Grid>
-                                <Button Text="Mark Returned"
-                                        BackgroundColor="#9C27B0" TextColor="White" CornerRadius="6"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ReturnRentalCommand}"
-                                        CommandParameter="{Binding .}" />
-                            </StackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
-
-        <!-- Outgoing Rentals -->
-        <CollectionView Grid.Row="2"
-                        ItemsSource="{Binding OutgoingRentals}"
-                        EmptyView="You have no outgoing rentals."
-                        x:Name="OutgoingView"
-                        IsVisible="False">
+    <Grid RowDefinitions="Auto,*,Auto,*">
+        <Label Grid.Row="0" Text="Incoming Requests (Your Items)" FontAttributes="Bold" Margin="10" />
+        <CollectionView Grid.Row="1" ItemsSource="{Binding IncomingRentals}">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border Margin="0,5" Padding="15" BackgroundColor="White" StrokeThickness="1">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="10"/></Border.StrokeShape>
-                        <StackLayout Spacing="8">
-                            <Label Text="{Binding Item.Title}" FontSize="16" FontAttributes="Bold" />
-                            <Label Text="{Binding Item.Owner.Email, StringFormat='Owner: {0}'}"
-                                   FontSize="13" TextColor="Gray" />
-                            <Label Text="{Binding Status, StringFormat='Status: {0}'}"
-                                   FontSize="13" TextColor="#FF9800" />
-                            <Label Text="{Binding TotalPrice, StringFormat='Total: £{0:F2}'}"
-                                   FontSize="14" TextColor="#2196F3" FontAttributes="Bold" />
-                            <Label Text="{Binding StartDate, StringFormat='Start: {0:dd/MM/yyyy}'}"
-                                   FontSize="12" TextColor="Gray" />
-                            <Label Text="{Binding EndDate, StringFormat='End: {0:dd/MM/yyyy}'}"
-                                   FontSize="12" TextColor="Gray" />
-                        </StackLayout>
-                    </Border>
+                <DataTemplate x:DataType="models:Rental">
+                    <Frame Margin="10,5">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Item.Title}" FontAttributes="Bold" />
+                            <Label Text="{Binding Status, StringFormat='Status: {0}'}" />
+                            <HorizontalStackLayout Spacing="10" Margin="0,10,0,0">
+                                <Button Text="Approve" Command="{Binding BindingContext.ApproveCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                                <Button Text="Reject" Command="{Binding BindingContext.RejectCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <Label Grid.Row="2" Text="Outgoing Rentals (Items you borrowed)" FontAttributes="Bold" Margin="10" />
+        <CollectionView Grid.Row="3" ItemsSource="{Binding OutgoingRentals}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Rental">
+                    <Frame Margin="10,5">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Item.Title}" FontAttributes="Bold" />
+                            <Label Text="{Binding Status, StringFormat='Status: {0}'}" />
+                            <Button Text="Return Item" Command="{Binding BindingContext.ReturnCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" Margin="0,10,0,0" />
+                        </VerticalStackLayout>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
