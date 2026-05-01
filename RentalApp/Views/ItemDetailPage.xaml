@@ -8,17 +8,16 @@
             <Label Text="{Binding Item.Title}" FontSize="24" FontAttributes="Bold" />
             <Label Text="{Binding Item.DailyRate, StringFormat='${0:F2} / day'}" FontSize="18" TextColor="Green" />
             <Label Text="{Binding Item.Description}" />
-            <Label Text="{Binding Item.Location, StringFormat='Location: {0}'}" FontSize="12" TextColor="Gray"/>
             
             <BoxView HeightRequest="1" Color="LightGray" />
             
-            <Label Text="Request Rental" FontAttributes="Bold" IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
-            <DatePicker MinimumDate="{Binding StartDate}" Date="{Binding StartDate}" IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
-            <DatePicker MinimumDate="{Binding StartDate}" Date="{Binding EndDate}" IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
-            <Label Text="{Binding EstimatedPrice, StringFormat='Estimated Total: ${0:F2}'}" FontAttributes="Bold" IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
-            <Entry Text="{Binding RentalNotes}" Placeholder="Note to owner..." IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
+            <Label Text="Request Rental" FontAttributes="Bold" IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
+            <DatePicker MinimumDate="{Binding StartDate}" Date="{Binding StartDate}" IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
+            <DatePicker MinimumDate="{Binding StartDate}" Date="{Binding EndDate}" IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
+            <Label Text="{Binding EstimatedPrice, StringFormat='Estimated Total: ${0:F2}'}" FontAttributes="Bold" IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
+            <Entry Text="{Binding RentalNotes}" Placeholder="Note to owner..." IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
             
-            <Button Text="Submit Request" Command="{Binding RequestRentalCommand}" IsVisible="{Binding IsOwner, Converter={x:StaticResource InvertedBoolConverter}}" />
+            <Button Text="Submit Request" Command="{Binding RequestRentalCommand}" IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}" />
             <Button Text="Edit Listing" Command="{Binding EditItemCommand}" IsVisible="{Binding IsOwner}" />
             
             <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
