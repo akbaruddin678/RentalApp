@@ -2,27 +2,32 @@ name: .NET MAUI CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET 10.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.x
+      - uses: actions/checkout@v4
 
-    - name: Restore dependencies
-      run: dotnet restore RentalApp.sln || dotnet restore RentalApp/RentalApp.csproj
-      
-    - name: Build MAUI App
-      run: dotnet build RentalApp/RentalApp.csproj -c Debug --no-restore
-      
-    - name: Run xUnit Test Suite
-      run: dotnet test RentalApp.Test/RentalApp.Test.csproj -c Debug --no-build --verbosity normal
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # --- THIS IS THE NEW STEP ---
+      - name: Install MAUI Workloads
+        run: dotnet workload restore RentalApp/RentalApp.csproj
+      # ----------------------------
+
+      - name: Restore dependencies
+        run: dotnet restore RentalApp/RentalApp.csproj
+
+      - name: Build MAUI App
+        run: dotnet build RentalApp/RentalApp.csproj -c Debug --no-restore
+
+      - name: Run xUnit Test Suite
+        run: dotnet test RentalApp.Test/RentalApp.Test.csproj -c Debug --no-build --verbosity normal
