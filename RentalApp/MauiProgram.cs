@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RentalApp.ViewModels;
 using RentalApp.Database.Data;
@@ -16,8 +17,10 @@ public static class MauiProgram
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         });
-        builder.Services.AddDbContext<AppDbContext>();
-        // StarterApp services - KEEP
+        string connectionString = "Host=192.168.18.114;Port=5432;Username=app_user;Password=app_password;Database=appdb";
+
+       builder.Services.AddDbContext<AppDbContext>(options =>
+                 options.UseNpgsql(connectionString));       
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
         // Repositories
@@ -63,6 +66,19 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        return builder.Build();
+        
+        // 1. Build the app
+        var app = builder.Build();
+
+        // 2. Force Entity Framework to create the tables in PostgreSQL
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            dbContext.Database.EnsureCreated(); 
+        }
+
+        // 3. Return the app
+        return app;
     }
 }
+
