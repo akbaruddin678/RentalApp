@@ -18,10 +18,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      # --- THIS IS THE NEW STEP ---
+      # --- THIS IS THE NEW STEP ---------------
       - name: Install MAUI Workloads
         run: dotnet workload restore RentalApp/RentalApp.csproj
-      # ----------------------------
+      # ----------------------------------------
 
       - name: Restore dependencies
         run: dotnet restore RentalApp/RentalApp.csproj
